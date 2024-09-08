@@ -11,4 +11,7 @@ import java.util.List;
 public interface ProductRepository {
     List<ProductDTO> getAllProducts();
     List<ProductDTO> findByCategories(@Param("categories") List<String> categories);
+    void addProduct(ProductDTO product);
+    void updateProduct(ProductDTO productDTO);
+    int deleteOrder(@Param("productId")byte[] productId);
 }
