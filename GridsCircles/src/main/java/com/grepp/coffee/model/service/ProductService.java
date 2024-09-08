@@ -38,12 +38,4 @@ public class ProductService {
             throw new CustomDatabaseException("Database access error", e);
         }
     }
-
-
-    private static UUID bytesToUUID(byte[] bytes) {
-        ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
-        long mostSigBits = byteBuffer.getLong(); // 상위 64비트
-        long leastSigBits = byteBuffer.getLong(); // 하위 64비트
-        return new UUID(mostSigBits, leastSigBits);
-    }
 }

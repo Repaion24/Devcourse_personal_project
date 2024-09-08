@@ -1,10 +1,13 @@
-package com.grepp.coffee.model.dto;
+package com.grepp.coffee.model.entity;
+
+import com.grepp.coffee.model.dto.OrderDTO;
+import com.grepp.coffee.model.dto.OrderItemDTO;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-public class OrderDTO {
+public class Order {
     private byte[] orderId;
     private String email;
     private String address;
@@ -12,11 +15,10 @@ public class OrderDTO {
     private String orderStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private List<OrderItemDTO> orderItemDTOList;
 
-    public OrderDTO() {}
+    public Order() {}
 
-    public OrderDTO(byte[] orderId, String email, String address, String postcode, String orderStatus, LocalDateTime createdAt, LocalDateTime updatedAt, List<OrderItemDTO> orderItemDTOList) {
+    public Order(byte[] orderId, String email, String address, String postcode, String orderStatus, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.orderId = orderId;
         this.email = email;
         this.address = address;
@@ -24,7 +26,18 @@ public class OrderDTO {
         this.orderStatus = orderStatus;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.orderItemDTOList = orderItemDTOList;
+    }
+
+    public OrderDTO toOrderDTO(){
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setOrderId(this.orderId);
+        orderDTO.setEmail(this.email);
+        orderDTO.setAddress(this.address);
+        orderDTO.setPostcode(this.postcode);
+        orderDTO.setOrderStatus(this.orderStatus);
+        orderDTO.setCreatedAt(this.createdAt);
+        orderDTO.setUpdatedAt(this.updatedAt);
+        return orderDTO;
     }
 
     public byte[] getOrderId() {
@@ -83,17 +96,9 @@ public class OrderDTO {
         this.updatedAt = updatedAt;
     }
 
-    public List<OrderItemDTO> getOrderItemDTOList() {
-        return orderItemDTOList;
-    }
-
-    public void setOrderItemDTOList(List<OrderItemDTO> orderItemDTOList) {
-        this.orderItemDTOList = orderItemDTOList;
-    }
-
     @Override
     public String toString() {
-        return "OrderDTO{" +
+        return "Order{" +
                 "orderId=" + Arrays.toString(orderId) +
                 ", email='" + email + '\'' +
                 ", address='" + address + '\'' +
@@ -101,7 +106,6 @@ public class OrderDTO {
                 ", orderStatus='" + orderStatus + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", orderItemDTOList=" + orderItemDTOList +
                 '}';
     }
 }

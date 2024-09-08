@@ -6,4 +6,9 @@
         FROM ORDERS
         WHERE EMAIL = #{email}
     </select>
+
+    <insert id="insertOrder" parameterType="com.grepp.coffee.model.entity.Order">
+        INSERT INTO ORDERS (ORDER_ID, EMAIL, ADDRESS, POSTCODE,  ORDER_STATUS, CREATED_AT, UPDATED_AT)
+        VALUES (#{orderId}, #{email}, #{address}, #{postcode}, #{orderStatus}, #{createdAt}, #{updatedAt})
+    </insert>
 </mapper>
