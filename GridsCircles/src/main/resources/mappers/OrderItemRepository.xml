@@ -5,6 +5,24 @@
         INSERT INTO order_items (order_id, product_id, category, price, quantity, created_at, updated_at)
         VALUES (#{orderId}, #{productId}, #{category}, #{price}, #{quantity}, #{createdAt}, #{updatedAt})
     </insert>
+
+    <update id="updateOrderItemById" parameterType="com.grepp.coffee.model.entity.OrderItem">
+        UPDATE ORDER_ITEMS
+        SET
+            order_id = #{orderId},
+            product_id = #{productId},
+            category = #{category},
+            price = #{price},
+            quantity = #{quantity},
+            created_at = #{createdAt},
+            updated_at = #{updatedAt}
+        WHERE
+            seq = #{seq}
+    </update>
+    <delete id="deleteOrderItemById">
+        DELETE FROM ORDER_ITEMS
+        WHERE SEQ = #{orderId}
+    </delete>
     <select id="getOrderItemsByOrderId" resultType="com.grepp.coffee.model.dto.OrderItemDTO">
         SELECT
             SEQ, ORDER_ID AS orderId, PRODUCT_ID AS productId, CATEGORY, PRICE, QUANTITY, CREATED_AT AS createdAt, UPDATED_AT AS updatedAt
