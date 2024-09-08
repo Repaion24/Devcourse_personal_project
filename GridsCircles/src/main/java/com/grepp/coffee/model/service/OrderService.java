@@ -124,11 +124,13 @@ public class OrderService {
         }
     }
 
+    @Transactional
     public int deleteOrder(byte[] orderId){
         System.out.println(orderId);
         return orderRepository.deleteOrder(orderId);
     }
 
+    @Transactional
     public int deleteOrderItem(int orderItemId){
         return orderItemRepository.deleteOrderItemById(orderItemId);
     }
