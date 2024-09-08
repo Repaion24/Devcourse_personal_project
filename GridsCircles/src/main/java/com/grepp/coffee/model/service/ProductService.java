@@ -21,17 +21,24 @@ public class ProductService {
 
     public List<ProductDTO> getAllProducts() {
         try {
-            List<ProductDTO> productDTOList = productRepository.getProducts();
-
-
-
-
+            List<ProductDTO> productDTOList = productRepository.getAllProducts();
             return productDTOList;
         } catch (DataAccessException e){
             System.err.println("Database access error: " + e.getMessage());
             throw new CustomDatabaseException("Database access error", e);
         }
     }
+
+    public List<ProductDTO> getProductsByCategories(List<String> categories) {
+        try {
+            List<ProductDTO> productDTOList = productRepository.findByCategories(categories);
+            return productDTOList;
+        } catch (DataAccessException e){
+            System.err.println("Database access error: " + e.getMessage());
+            throw new CustomDatabaseException("Database access error", e);
+        }
+    }
+
 
     private static UUID bytesToUUID(byte[] bytes) {
         ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
