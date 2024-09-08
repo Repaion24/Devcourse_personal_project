@@ -1,9 +1,13 @@
 package com.grepp.coffee.model.entity;
 
+import com.grepp.coffee.model.dto.OrderDTO;
+import com.grepp.coffee.model.dto.OrderItemDTO;
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
 public class OrderItem {
+    private int seq;
     private byte[] orderId;
     private byte[] productId;
     private String category;
@@ -22,6 +26,27 @@ public class OrderItem {
         this.quantity = quantity;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    public OrderItemDTO toOrderItemDTO(){
+        OrderItemDTO dto = new OrderItemDTO();
+        dto.setSeq(seq);
+        dto.setOrderId(orderId);
+        dto.setProductId(productId);
+        dto.setCategory(category);
+        dto.setPrice(price);
+        dto.setQuantity(quantity);
+        dto.setCreatedAt(createdAt);
+        dto.setUpdatedAt(updatedAt);
+        return dto;
+    }
+
+    public int getSeq() {
+        return seq;
+    }
+
+    public void setSeq(int seq) {
+        this.seq = seq;
     }
 
     public byte[] getOrderId() {

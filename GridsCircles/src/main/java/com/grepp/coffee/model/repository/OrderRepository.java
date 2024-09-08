@@ -12,4 +12,7 @@ import java.util.List;
 public interface OrderRepository {
     void insertOrder(Order order);
     List<OrderDTO> getAllOrders(@Param("email")String email);
+    String getOrderStatus(@Param("orderId")byte[] orderId);
+    void updateOrder(Order order);
+    int deleteOrder(@Param("orderId")byte[] orderId);
 }

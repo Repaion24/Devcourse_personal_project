@@ -11,4 +11,6 @@ import java.util.List;
 public interface OrderItemRepository {
     void insertOrderItem(OrderItem orderItem);
     List<OrderItemDTO> getOrderItemsByOrderId(@Param("orderId")byte[] orderId);
+    void updateOrderItemById(OrderItem orderItem);
+    int deleteOrderItemById(@Param("orderId")int orderId);
 }

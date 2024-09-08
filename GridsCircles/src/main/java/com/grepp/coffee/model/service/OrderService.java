@@ -43,32 +43,101 @@ public class OrderService {
 
     @Transactional
     public OrderDTO createOrder(OrderDTO orderDTO) {
+        try {
+            Order order = new Order(
+                    uuidToBytes(UUID.randomUUID()),
+                    orderDTO.getEmail(),
+                    orderDTO.getAddress(),
+                    orderDTO.getPostcode(),
+                    "주문중",
+                    LocalDateTime.now(),
+                    LocalDateTime.now()
+            );
+            orderRepository.insertOrder(order);
 
+
+            for(OrderItemDTO orderItemDTO : orderDTO.getOrderItemDTOList()){
+                OrderItem orderItem = new OrderItem(
+                        order.getOrderId(),
+                        orderItemDTO.getProductId(),
+                        orderItemDTO.getCategory(),
+                        orderItemDTO.getPrice(),
+                        orderItemDTO.getQuantity(),
+                        LocalDateTime.now(),
+                        LocalDateTime.now()
+                );
+                orderItemRepository.insertOrderItem(orderItem);
+            }
+            return order.toOrderDTO();
+        } catch (DataAccessException e){
+            System.err.println("Database access error: " + e.getMessage());
+            throw new CustomDatabaseException("Database access error", e);
+        }
+    }
+
+    @Transactional
+    public OrderDTO updateOrder(OrderDTO orderDTO){
+        try {
+            String orderStatus = getOrderStatus(orderDTO.getOrderId());
+        if(orderDTO.getOrderId() == null || !"주문중".equals(orderStatus)){
+            return null;
+        }
         Order order = new Order(
-                uuidToBytes(UUID.randomUUID()),
+                orderDTO.getOrderId(),
                 orderDTO.getEmail(),
                 orderDTO.getAddress(),
                 orderDTO.getPostcode(),
-                "주문중",
-                LocalDateTime.now(),
+                orderDTO.getOrderStatus(),
+                orderDTO.getCreatedAt(),
                 LocalDateTime.now()
         );
-        orderRepository.insertOrder(order);
+        orderRepository.updateOrder(order);
+        return order.toOrderDTO();
+        } catch (DataAccessException e){
+            System.err.println("Database access error: " + e.getMessage());
+            throw new CustomDatabaseException("Database access error", e);
+        }
+    }
 
-
-        for(OrderItemDTO orderItemDTO : orderDTO.getOrderItemDTOList()){
+    @Transactional
+    public OrderItemDTO updateOrderItem(OrderItemDTO orderItemDTO){
+        try {
+            String orderStatus = getOrderStatus(orderItemDTO.getOrderId());
+            if(orderItemDTO.getOrderId() == null || !"주문중".equals(orderStatus)){
+                return null;
+            }
             OrderItem orderItem = new OrderItem(
-                    order.getOrderId(),
+                    orderItemDTO.getOrderId(),
                     orderItemDTO.getProductId(),
                     orderItemDTO.getCategory(),
                     orderItemDTO.getPrice(),
                     orderItemDTO.getQuantity(),
-                    LocalDateTime.now(),
+                    orderItemDTO.getCreatedAt(),
                     LocalDateTime.now()
             );
-            orderItemRepository.insertOrderItem(orderItem);
+            orderItem.setSeq(orderItemDTO.getSeq());
+            orderItemRepository.updateOrderItemById(orderItem);
+            return orderItem.toOrderItemDTO();
+        } catch (DataAccessException e){
+            System.err.println("Database access error: " + e.getMessage());
+            throw new CustomDatabaseException("Database access error", e);
         }
-        return order.toOrderDTO();
+    }
+
+    public int deleteOrder(byte[] orderId){
+        System.out.println(orderId);
+        return orderRepository.deleteOrder(orderId);
+    }
+
+    public int deleteOrderItem(int orderItemId){
+        return orderItemRepository.deleteOrderItemById(orderItemId);
+    }
+
+
+
+
+    private String getOrderStatus(byte[] id){
+        return orderRepository.getOrderStatus(id);
     }
 
     private static byte[] uuidToBytes(UUID uuid) {
