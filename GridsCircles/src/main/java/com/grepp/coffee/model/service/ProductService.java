@@ -19,13 +19,23 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+
+    /**
+     * 모든 제품을 가져오는 메서드
+     */
     public List<ProductDTO> getAllProductList() {
         return executeWithExceptionHandling(() -> productRepository.getAllProducts());
     }
-
+    /**
+     * 카테고리 목록을 기준으로 제품을 가져오는 메서드
+     */
     public List<ProductDTO> getProductsByCategoryList(List<String> categories) {
         return executeWithExceptionHandling(() -> productRepository.findByCategories(categories));
     }
+
+    /**
+     * 제품을 생성하는 메서드
+     */
     @Transactional
     public ProductDTO createProduct(ProductDTO productDTO) {
         return executeWithExceptionHandling(() -> {
@@ -38,6 +48,9 @@ public class ProductService {
         });
     }
 
+    /**
+     * 제품을 업데이트하는 메서드
+     */
     @Transactional
     public ProductDTO updateProduct(ProductDTO productDTO) {
         return executeWithExceptionHandling(() -> {
@@ -47,6 +60,9 @@ public class ProductService {
         });
     }
 
+    /**
+     * 제품을 삭제하는 메서드
+     */
     @Transactional
     public int deleteProduct(byte[] productId){
         return executeWithExceptionHandling(() -> {
@@ -55,6 +71,7 @@ public class ProductService {
         });
     }
 
+    // UUID를 byte 배열로 변환하는 메서드
     private static byte[] uuidToBytes(UUID uuid) {
         ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[16]);
         byteBuffer.putLong(uuid.getMostSignificantBits());
@@ -62,6 +79,7 @@ public class ProductService {
         return byteBuffer.array();
     }
 
+    // 예외 처리 메서드
     private <T> T executeWithExceptionHandling(Supplier<T> action) {
         try {
             return action.get();
