@@ -18,6 +18,7 @@ import java.util.UUID;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+    private static final String SUCCESS_MESSAGE = "Operation completed successfully.";
 
     @PutMapping
     public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO) {
@@ -28,46 +29,38 @@ public class OrderController {
     @GetMapping("/list")
     public ResponseEntity<List<OrderDTO>> getOrders(@RequestHeader("email") String email) {
         List<OrderDTO> orders = orderService.getOrdersByEmail(email);
-        if (orders.isEmpty()) {
-            return ResponseEntity.noContent().build(); // 리스트가 비어 있으면 204 No Content
-        }
-        return ResponseEntity.ok(orders); // 200 OK와 함께 리스트 반환
+        return handleOptionalResponse(orders);
     }
 
     @PutMapping("/mod")
     public ResponseEntity<OrderDTO> updateOrder(@RequestBody OrderDTO orderDTO) {
         OrderDTO updateOrder = orderService.updateOrder(orderDTO);
-        if (updateOrder == null) {
-            return ResponseEntity.noContent().build(); // 리스트가 비어 있으면 204 No Content
-        }
-        return ResponseEntity.ok(updateOrder); // 200 OK와 함께 리스트 반환
+        return handleOptionalResponse(updateOrder);
     }
 
     @PutMapping("/moditem")
     public ResponseEntity<OrderItemDTO> updateOrderItem(@RequestBody OrderItemDTO orderItemDTO) {
         OrderItemDTO updateOrderItem = orderService.updateOrderItem(orderItemDTO);
-        if (updateOrderItem == null) {
-            return ResponseEntity.noContent().build(); // 리스트가 비어 있으면 204 No Content
-        }
-        return ResponseEntity.ok(updateOrderItem); // 200 OK와 함께 리스트 반환
+        return handleOptionalResponse(updateOrderItem);
     }
 
     @DeleteMapping("/del")
     public ResponseEntity<?> deleteOrder(@RequestHeader("orderId")String orderId) {
         byte[] id = Base64.getDecoder().decode(orderId);
         int result = orderService.deleteOrder(id);
-        if (result == 0) {
-            return ResponseEntity.noContent().build(); // 리스트가 비어 있으면 204 No Content
-        }
-        return ResponseEntity.ok("Order deleted successfully.");
+        return result == 0 ? ResponseEntity.noContent().build() : ResponseEntity.ok(SUCCESS_MESSAGE);
     }
 
     @DeleteMapping("/delItem")
     public ResponseEntity<?> deleteOrderItem(@RequestHeader("orderItemId")int orderItemId) {
         int result = orderService.deleteOrderItem(orderItemId);
-        if (result == 0) {
-            return ResponseEntity.noContent().build(); // 리스트가 비어 있으면 204 No Content
+        return result == 0 ? ResponseEntity.noContent().build() : ResponseEntity.ok(SUCCESS_MESSAGE);
+    }
+
+    private <T> ResponseEntity<T> handleOptionalResponse(T body) {
+        if (body == null) {
+            return ResponseEntity.noContent().build(); // 데이터가 없으면 204 반환
         }
-        return ResponseEntity.ok("OrderItem deleted successfully.");
+        return ResponseEntity.ok(body);
     }
 }

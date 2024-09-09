@@ -11,10 +11,10 @@
             category = #{category},
             price = #{price},
             description = #{description},
-            updated_at = #{updatedAt}
+            updated_at = NOW()
         WHERE product_id = #{productId}
     </update>
-    <delete id="deleteOrder">
+    <delete id="deleteProduct">
         DELETE FROM products
         WHERE product_id = #{productId, jdbcType=BINARY}
     </delete>

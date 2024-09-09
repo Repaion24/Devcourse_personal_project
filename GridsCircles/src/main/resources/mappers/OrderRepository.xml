@@ -8,8 +8,7 @@
             ADDRESS = #{address},
             POSTCODE = #{postcode},
             ORDER_STATUS = #{orderStatus},
-            CREATED_AT = #{createdAt},
-            UPDATED_AT = #{updatedAt}
+            UPDATED_AT = NOW()
         WHERE
             ORDER_ID = #{orderId}
     </update>

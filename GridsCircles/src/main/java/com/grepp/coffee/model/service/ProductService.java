@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @Component
 public class ProductService {
@@ -21,54 +22,39 @@ public class ProductService {
     private ProductRepository productRepository;
 
     public List<ProductDTO> getAllProducts() {
-        try {
-            List<ProductDTO> productDTOList = productRepository.getAllProducts();
-            return productDTOList;
-        } catch (DataAccessException e){
-            System.err.println("Database access error: " + e.getMessage());
-            throw new CustomDatabaseException("Database access error", e);
-        }
+        return executeWithExceptionHandling(() -> productRepository.getAllProducts());
     }
 
     public List<ProductDTO> getProductsByCategories(List<String> categories) {
-        try {
-            List<ProductDTO> productDTOList = productRepository.findByCategories(categories);
-            return productDTOList;
-        } catch (DataAccessException e){
-            System.err.println("Database access error: " + e.getMessage());
-            throw new CustomDatabaseException("Database access error", e);
-        }
+        return executeWithExceptionHandling(() -> productRepository.findByCategories(categories));
     }
     @Transactional
     public ProductDTO createProduct(ProductDTO productDTO) {
-        try {
+        return executeWithExceptionHandling(() -> {
             productDTO.setProductId(uuidToBytes(UUID.randomUUID()));
-            productDTO.setCreatedAt(LocalDateTime.now());
-            productDTO.setUpdatedAt(LocalDateTime.now());
+            LocalDateTime now = LocalDateTime.now();
+            productDTO.setCreatedAt(now);
+            productDTO.setUpdatedAt(now);
             productRepository.addProduct(productDTO);
-        } catch (DataAccessException e){
-            System.err.println("Database access error: " + e.getMessage());
-            throw new CustomDatabaseException("Database access error", e);
-        }
-        return productDTO;
+            return productDTO;
+        });
     }
 
     @Transactional
     public ProductDTO updateProduct(ProductDTO productDTO) {
-        try {
+        return executeWithExceptionHandling(() -> {
             productDTO.setUpdatedAt(LocalDateTime.now());
             productRepository.updateProduct(productDTO);
-        } catch (DataAccessException e){
-            System.err.println("Database access error: " + e.getMessage());
-            throw new CustomDatabaseException("Database access error", e);
-        }
-        return productDTO;
+            return productDTO;
+        });
     }
 
     @Transactional
     public int deleteProduct(byte[] productId){
-        System.out.println(productId);
-        return productRepository.deleteOrder(productId);
+        return executeWithExceptionHandling(() -> {
+            System.out.println(productId);
+            return productRepository.deleteProduct(productId);
+        });
     }
 
     private static byte[] uuidToBytes(UUID uuid) {
@@ -76,5 +62,14 @@ public class ProductService {
         byteBuffer.putLong(uuid.getMostSignificantBits());
         byteBuffer.putLong(uuid.getLeastSignificantBits());
         return byteBuffer.array();
+    }
+
+    private <T> T executeWithExceptionHandling(Supplier<T> action) {
+        try {
+            return action.get();
+        } catch (DataAccessException e) {
+            System.err.println("Database access error: " + e.getMessage());
+            throw new CustomDatabaseException("Database access error", e);
+        }
     }
 }

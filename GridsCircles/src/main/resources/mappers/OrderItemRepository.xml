@@ -14,8 +14,7 @@
             category = #{category},
             price = #{price},
             quantity = #{quantity},
-            created_at = #{createdAt},
-            updated_at = #{updatedAt}
+            updated_at = NOW()
         WHERE
             seq = #{seq}
     </update>
