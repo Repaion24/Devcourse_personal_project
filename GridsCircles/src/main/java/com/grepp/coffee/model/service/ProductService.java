@@ -9,9 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.ByteBuffer;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -21,11 +19,11 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    public List<ProductDTO> getAllProducts() {
+    public List<ProductDTO> getAllProductList() {
         return executeWithExceptionHandling(() -> productRepository.getAllProducts());
     }
 
-    public List<ProductDTO> getProductsByCategories(List<String> categories) {
+    public List<ProductDTO> getProductsByCategoryList(List<String> categories) {
         return executeWithExceptionHandling(() -> productRepository.findByCategories(categories));
     }
     @Transactional

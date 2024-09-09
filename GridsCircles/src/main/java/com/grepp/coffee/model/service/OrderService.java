@@ -2,7 +2,6 @@ package com.grepp.coffee.model.service;
 
 import com.grepp.coffee.model.dto.OrderDTO;
 import com.grepp.coffee.model.dto.OrderItemDTO;
-import com.grepp.coffee.model.dto.ProductDTO;
 import com.grepp.coffee.model.entity.Order;
 import com.grepp.coffee.model.entity.OrderItem;
 import com.grepp.coffee.model.exception.CustomDatabaseException;
@@ -28,7 +27,7 @@ public class OrderService {
     private OrderItemRepository orderItemRepository;
 
 
-    public List<OrderDTO> getAllOrders() {
+    public List<OrderDTO> getAllOrderList() {
         return executeWithExceptionHandling(() -> {
             List<OrderDTO> orderDTOList = orderRepository.getAllOrders();
             return enrichOrdersWithItems(orderDTOList);
@@ -36,7 +35,7 @@ public class OrderService {
     }
 
     @Transactional
-    public List<OrderDTO> updateOrdersStatus(){
+    public List<OrderDTO> updateOrdersStatusList(){
         return executeWithExceptionHandling(() -> {
             LocalDateTime cutOffTime = calculateCutOffTime();
             List<OrderDTO> orderDTOList = orderRepository.getOrdersByStatus("주문중", cutOffTime);

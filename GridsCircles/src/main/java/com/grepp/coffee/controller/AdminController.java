@@ -51,13 +51,13 @@ public class AdminController {
 
     @GetMapping(LIST_PATH)
     public ResponseEntity<List<OrderDTO>> getAllOrders() {
-        List<OrderDTO> orders = orderService.getAllOrders();
+        List<OrderDTO> orders = orderService.getAllOrderList();
         return handleResponse(orders);
     }
 
     @PutMapping(DELIVER_PATH)
     public ResponseEntity<List<OrderDTO>> deliver() {
-        List<OrderDTO> orders = orderService.updateOrdersStatus();
+        List<OrderDTO> orders = orderService.updateOrdersStatusList();
         return handleResponse(orders);
     }
 

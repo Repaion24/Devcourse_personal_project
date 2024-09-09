@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class ProductController {
 
     @GetMapping("/list")
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        List<ProductDTO> products = productService.getAllProducts();
+        List<ProductDTO> products = productService.getAllProductList();
         return handleResponse(products);
     }
 
@@ -28,7 +27,7 @@ public class ProductController {
     @GetMapping("/{category}")
     public ResponseEntity<List<ProductDTO>> getProductsByCategory(@PathVariable("category") String category) {
         List<String> categories = Arrays.asList(category.split(","));
-        List<ProductDTO> products = productService.getProductsByCategories(categories);
+        List<ProductDTO> products = productService.getProductsByCategoryList(categories);
         return handleResponse(products);
     }
 
