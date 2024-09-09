@@ -1,5 +1,7 @@
 package com.grepp.coffee.model.dto;
 
+import com.grepp.coffee.model.entity.Order;
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +27,18 @@ public class OrderDTO {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.orderItemDTOList = orderItemDTOList;
+    }
+
+    public Order toOrder(){
+        Order order = new Order();
+        order.setOrderId(orderId);
+        order.setEmail(email);
+        order.setAddress(address);
+        order.setPostcode(postcode);
+        order.setOrderStatus(orderStatus);
+        order.setCreatedAt(createdAt);
+        order.setUpdatedAt(updatedAt);
+        return order;
     }
 
     public byte[] getOrderId() {

@@ -19,6 +19,11 @@
         WHERE order_status = '주문중'
         AND updated_at &lt; #{cutOffTime}
     </update>
+    <update id="updateOrderTimeById">
+        UPDATE orders
+        SET updated_at = NOW()
+        WHERE ORDER_ID = #{id, jdbcType=BINARY}
+    </update>
     <delete id="deleteOrder">
         DELETE FROM ORDERS
         WHERE order_id = #{orderId, jdbcType=BINARY}
@@ -42,6 +47,14 @@
         FROM ORDERS
         WHERE ORDER_STATUS = #{status}
         AND UPDATED_AT &lt; #{cutOffTime}
+    </select>
+    <select id="getOrderByAll" parameterType="String" resultType="com.grepp.coffee.model.dto.OrderDTO">
+        SELECT ORDER_ID AS 'orderId', EMAIL, ADDRESS, POSTCODE, ORDER_STATUS AS 'orderStatus', CREATED_AT AS 'createdAt', UPDATED_AT AS 'UpdatedAt'
+        FROM ORDERS
+        WHERE EMAIL = #{email}
+        AND order_status = '주문중'
+        AND ADDRESS = #{address}
+        AND POSTCODE = #{postcode}
     </select>
 
     <insert id="insertOrder" parameterType="com.grepp.coffee.model.entity.Order">

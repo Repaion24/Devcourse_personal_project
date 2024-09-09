@@ -70,6 +70,12 @@ public class OrderService {
     @Transactional
     public OrderDTO createOrder(OrderDTO orderDTO) {
         try {
+            OrderDTO getOrder = getOrderByEmail(orderDTO);
+            if (getOrder != null) {
+                orderDTO.setOrderId(getOrder.getOrderId());
+                updatetime(orderDTO.getOrderId());
+                return createOrderItemDTO(orderDTO);
+            }
             Order order = new Order(
                     uuidToBytes(UUID.randomUUID()),
                     orderDTO.getEmail(),
@@ -80,8 +86,6 @@ public class OrderService {
                     LocalDateTime.now()
             );
             orderRepository.insertOrder(order);
-
-
             for(OrderItemDTO orderItemDTO : orderDTO.getOrderItemDTOList()){
                 OrderItem orderItem = new OrderItem(
                         order.getOrderId(),
@@ -162,7 +166,25 @@ public class OrderService {
     }
 
 
+    private OrderDTO createOrderItemDTO(OrderDTO orderDTO) {
+        for (OrderItemDTO orderItemDTO : orderDTO.getOrderItemDTOList()) {
+            OrderItem orderItem = new OrderItem(
+                    orderDTO.getOrderId(),
+                    orderItemDTO.getProductId(),
+                    orderItemDTO.getCategory(),
+                    orderItemDTO.getPrice(),
+                    orderItemDTO.getQuantity(),
+                    LocalDateTime.now(),
+                    LocalDateTime.now()
+            );
+            orderItemRepository.insertOrderItem(orderItem);
+        }
+        return orderDTO;
+    }
 
+    private OrderDTO getOrderByEmail(OrderDTO orderDTO){
+        return orderRepository.getOrderByAll(orderDTO);
+    }
 
     private String getOrderStatus(byte[] id){
         return orderRepository.getOrderStatus(id);
@@ -181,5 +203,9 @@ public class OrderService {
             orderDTO.setOrderItemDTOList(orderItemDTOList);
         }
         return orderDTOList;
+    }
+
+    private void updatetime(byte[] id){
+        orderRepository.updateOrderTimeById(id);
     }
 }
