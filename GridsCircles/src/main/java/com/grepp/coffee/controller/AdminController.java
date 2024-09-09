@@ -2,12 +2,14 @@ package com.grepp.coffee.controller;
 
 import com.grepp.coffee.model.dto.OrderDTO;
 import com.grepp.coffee.model.dto.ProductDTO;
+import com.grepp.coffee.model.service.OrderService;
 import com.grepp.coffee.model.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
@@ -15,17 +17,20 @@ public class AdminController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private OrderService orderService;
+
 
     @PostMapping("/reg")
     public ResponseEntity<ProductDTO> register(@RequestBody ProductDTO productDTO) {
         ProductDTO createProduct = productService.createProduct(productDTO);
-        return ResponseEntity.ok(createProduct); // 200 OK와 함께 리스트 반환
+        return ResponseEntity.ok(createProduct);    // 200 OK와 함께 추가한 상품 반환
     }
 
     @PutMapping("/mod")
     public ResponseEntity<ProductDTO> update(@RequestBody ProductDTO productDTO) {
         ProductDTO updateProduct = productService.updateProduct(productDTO);
-        return ResponseEntity.ok(updateProduct);
+        return ResponseEntity.ok(updateProduct);    // 200 OK와 함께 업데이트한 상품 반환
     }
 
     @DeleteMapping("/del")
@@ -37,4 +42,23 @@ public class AdminController {
         }
         return ResponseEntity.ok("Product deleted successfully.");
     }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<OrderDTO>> getAllOrders() {
+        List<OrderDTO> orders = orderService.getAllOrders();
+        if (orders.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 리스트가 비어 있으면 204 No Content
+        }
+        return ResponseEntity.ok(orders); // 200 OK와 함께 리스트 반환
+    }
+
+    @PutMapping("/delivery")
+    public ResponseEntity<List<OrderDTO>> deliver() {
+        List<OrderDTO> orders = orderService.updateOrdersStatus();
+        if (orders.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 리스트가 비어 있으면 204 No Content
+        }
+        return ResponseEntity.ok(orders); // 200 OK와 함께 리스트 반환
+    }
+
 }

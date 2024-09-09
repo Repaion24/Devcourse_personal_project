@@ -6,13 +6,17 @@ import com.grepp.coffee.model.entity.Order;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
 public interface OrderRepository {
     void insertOrder(Order order);
-    List<OrderDTO> getAllOrders(@Param("email")String email);
+    List<OrderDTO> getOrdersByEmail(@Param("email")String email);
     String getOrderStatus(@Param("orderId")byte[] orderId);
     void updateOrder(Order order);
     int deleteOrder(@Param("orderId")byte[] orderId);
+    List<OrderDTO> getAllOrders();
+    int updateOrdersStatus(@Param("cutOffTime")LocalDateTime cutOffTime);
+    List<OrderDTO> getOrdersByStatus(@Param("status")String status, @Param("cutOffTime")LocalDateTime cutOffTime);
 }

@@ -27,14 +27,40 @@ public class OrderService {
     private OrderItemRepository orderItemRepository;
 
 
+    public List<OrderDTO> getAllOrders() {
+        try{
+            List<OrderDTO> orderDTOList = orderRepository.getAllOrders();
+            return getOrderItemsByOrderId(orderDTOList);
+        } catch (DataAccessException e){
+            System.err.println("Database access error: " + e.getMessage());
+            throw new CustomDatabaseException("Database access error", e);
+        }
+    }
+
+    @Transactional
+    public List<OrderDTO> updateOrdersStatus(){
+        try{
+            // 기준 시간을 오후 2시로 설정
+            // 요청 시점이 오후 2시 이전이면, 전날 오후 2시 이전의 주문만 업데이트
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime cutOffTime = now.withHour(14).withMinute(0).withSecond(0).withNano(0);
+            if (now.isBefore(cutOffTime)) {
+                cutOffTime = cutOffTime.minusDays(1); // 전날 오후 2시
+            }
+            List<OrderDTO> orderDTOList = orderRepository.getOrdersByStatus("주문중", cutOffTime);
+            orderRepository.updateOrdersStatus(cutOffTime);
+            return getOrderItemsByOrderId(orderDTOList);
+        } catch (DataAccessException e){
+            System.err.println("Database access error: " + e.getMessage());
+            throw new CustomDatabaseException("Database access error", e);
+        }
+    }
+
+
     public List<OrderDTO> getOrdersByEmail(String email) {
         try {
-            List<OrderDTO> orderDTOList = orderRepository.getAllOrders(email);
-            for (OrderDTO orderDTO : orderDTOList) {
-                List<OrderItemDTO> orderItemDTOList = orderItemRepository.getOrderItemsByOrderId(orderDTO.getOrderId());
-                orderDTO.setOrderItemDTOList(orderItemDTOList);
-            }
-            return orderDTOList;
+            List<OrderDTO> orderDTOList = orderRepository.getOrdersByEmail(email);
+            return getOrderItemsByOrderId(orderDTOList);
         } catch (DataAccessException e){
             System.err.println("Database access error: " + e.getMessage());
             throw new CustomDatabaseException("Database access error", e);
@@ -147,5 +173,13 @@ public class OrderService {
         byteBuffer.putLong(uuid.getMostSignificantBits());
         byteBuffer.putLong(uuid.getLeastSignificantBits());
         return byteBuffer.array();
+    }
+
+    private List<OrderDTO> getOrderItemsByOrderId(List<OrderDTO> orderDTOList){
+        for (OrderDTO orderDTO : orderDTOList) {
+            List<OrderItemDTO> orderItemDTOList = orderItemRepository.getOrderItemsByOrderId(orderDTO.getOrderId());
+            orderDTO.setOrderItemDTOList(orderItemDTOList);
+        }
+        return orderDTOList;
     }
 }

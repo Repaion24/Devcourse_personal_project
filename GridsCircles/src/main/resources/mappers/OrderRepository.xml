@@ -13,11 +13,17 @@
         WHERE
             ORDER_ID = #{orderId}
     </update>
+    <update id="updateOrdersStatus" parameterType="java.time.LocalDateTime">
+        UPDATE orders
+        SET order_status = '배송중', updated_at = NOW()
+        WHERE order_status = '주문중'
+        AND updated_at &lt; #{cutOffTime}
+    </update>
     <delete id="deleteOrder">
         DELETE FROM ORDERS
         WHERE order_id = #{orderId, jdbcType=BINARY}
     </delete>
-    <select id="getAllOrders" parameterType="String" resultType="com.grepp.coffee.model.dto.OrderDTO">
+    <select id="getOrdersByEmail" parameterType="String" resultType="com.grepp.coffee.model.dto.OrderDTO">
         SELECT ORDER_ID AS 'orderId', EMAIL, ADDRESS, POSTCODE, ORDER_STATUS AS 'orderStatus', CREATED_AT AS 'createdAt', UPDATED_AT AS 'UpdatedAt'
         FROM ORDERS
         WHERE EMAIL = #{email}
@@ -26,6 +32,16 @@
         SELECT ORDER_STATUS
         FROM ORDERS
         WHERE ORDER_ID = #{orderId, jdbcType=BINARY}
+    </select>
+    <select id="getAllOrders" resultType="com.grepp.coffee.model.dto.OrderDTO">
+        SELECT ORDER_ID AS 'orderId', EMAIL, ADDRESS, POSTCODE, ORDER_STATUS AS 'orderStatus', CREATED_AT AS 'createdAt', UPDATED_AT AS 'UpdatedAt'
+        FROM ORDERS
+    </select>
+    <select id="getOrdersByStatus" resultType="com.grepp.coffee.model.dto.OrderDTO">
+        SELECT ORDER_ID AS 'orderId', EMAIL, ADDRESS, POSTCODE, ORDER_STATUS AS 'orderStatus', CREATED_AT AS 'createdAt', UPDATED_AT AS 'UpdatedAt'
+        FROM ORDERS
+        WHERE ORDER_STATUS = #{status}
+        AND UPDATED_AT &lt; #{cutOffTime}
     </select>
 
     <insert id="insertOrder" parameterType="com.grepp.coffee.model.entity.Order">
