@@ -13,10 +13,12 @@ import java.util.List;
 public interface OrderRepository {
     void insertOrder(Order order);
     List<OrderDTO> getOrdersByEmail(@Param("email")String email);
+    OrderDTO getOrderByAll(OrderDTO order);
     String getOrderStatus(@Param("orderId")byte[] orderId);
     void updateOrder(Order order);
     int deleteOrder(@Param("orderId")byte[] orderId);
     List<OrderDTO> getAllOrders();
     int updateOrdersStatus(@Param("cutOffTime")LocalDateTime cutOffTime);
     List<OrderDTO> getOrdersByStatus(@Param("status")String status, @Param("cutOffTime")LocalDateTime cutOffTime);
+    void updateOrderTimeById(@Param("id")byte[] id);
 }
